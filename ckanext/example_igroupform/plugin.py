@@ -63,10 +63,6 @@ class ExampleIGroupFormPlugin_DefaultGroupType(plugins.SingletonPlugin,
         return 'example_igroup_form/group_form.html'
 
 
-class GrupController(tk.OrganizationController):
-    group_types = [group_type, ]
-
-
 class ExampleIGroupFormOrganizationPlugin(plugins.SingletonPlugin,
                                           tk.DefaultOrganizationForm):
     '''An example IGroupForm Organization CKAN plugin with custom group_type.
@@ -90,4 +86,4 @@ class ExampleIGroupFormOrganizationPlugin(plugins.SingletonPlugin,
         False
 
     def group_controller(self):
-        return 'ckanext.example_igroupform.plugin:GrupController'
+        return 'organization'

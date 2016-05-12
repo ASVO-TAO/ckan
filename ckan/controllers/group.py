@@ -413,6 +413,10 @@ class GroupController(base.BaseController):
             # FIXME: better error
             raise Exception('Must be an organization')
 
+        if not c.group_dict['is_organization']:
+            # FIXME: better error
+            raise Exception('Must be an organization')
+
         #use different form names so that ie7 can be detected
         form_names = set(["bulk_action.public", "bulk_action.delete",
                           "bulk_action.private"])

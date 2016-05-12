@@ -61,6 +61,16 @@ class TestGroupController(helpers.FunctionalTestBase):
         else:
             raise Exception("Response should have raised an exception")
 
+    def test_delete(self):
+        app = self._get_test_app()
+        user = factories.User()
+        group = factories.Group(user=user, type=custom_group_type)
+        group_name = group['name']
+        env = {'REMOTE_USER': user['name'].encode('ascii')}
+        url = url_for('%s_action' % custom_group_type, action='delete',
+                      id=group_name)
+        response = app.get(url=url, extra_environ=env)
+
 
 class TestOrganizationController(helpers.FunctionalTestBase):
     @classmethod
@@ -91,6 +101,16 @@ class TestOrganizationController(helpers.FunctionalTestBase):
         group_name = group['name']
         env = {'REMOTE_USER': user['name'].encode('ascii')}
         url = url_for('%s_bulk_process' % custom_group_type,
+                      id=group_name)
+        response = app.get(url=url, extra_environ=env)
+
+    def test_delete(self):
+        app = self._get_test_app()
+        user = factories.User()
+        group = factories.Organization(user=user, type=custom_group_type)
+        group_name = group['name']
+        env = {'REMOTE_USER': user['name'].encode('ascii')}
+        url = url_for('%s_action' % custom_group_type, action='delete',
                       id=group_name)
         response = app.get(url=url, extra_environ=env)
 
