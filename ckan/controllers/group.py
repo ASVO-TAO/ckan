@@ -417,6 +417,10 @@ class GroupController(base.BaseController):
             # FIXME: better error
             raise Exception('Must be an organization')
 
+        if not c.group_dict['is_organization']:
+            # FIXME: better error
+            raise Exception('Must be an organization')
+
         #use different form names so that ie7 can be detected
         form_names = set(["bulk_action.public", "bulk_action.delete",
                           "bulk_action.private"])
@@ -459,9 +463,7 @@ class GroupController(base.BaseController):
             get_action(action_functions[action])(context, data_dict)
         except NotAuthorized:
             abort(401, _('Not authorized to perform bulk update'))
-        base.redirect(h.url_for(controller='organization',
-                                action='bulk_process',
-                                id=id))
+        self._redirect_to_this_controller(action='bulk_process', id=id)
 
     def new(self, data=None, errors=None, error_summary=None):
         if data and 'type' in data:
