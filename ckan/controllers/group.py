@@ -35,6 +35,10 @@ lookup_group_controller = ckan.lib.plugins.lookup_group_controller
 
 
 class GroupController(base.BaseController):
+    '''Controller to display Groups.
+
+    Can be inherited from to use with IGroupForm extensions.
+    '''
 
     group_types = ['group']
 
@@ -386,10 +390,6 @@ class GroupController(base.BaseController):
         group_type = self._ensure_controller_matches_group_type(
             id.split('@')[0])
 
-        if group_type != 'organization':
-            # FIXME: better error
-            raise Exception('Must be an organization')
-
         # check we are org admin
 
         context = {'model': model, 'session': model.Session,
@@ -408,6 +408,10 @@ class GroupController(base.BaseController):
             abort(404, _('Group not found'))
         except NotAuthorized:
             abort(401, _('Unauthorized to read group %s') % id)
+
+        if not c.group_dict['is_organization']:
+            # FIXME: better error
+            raise Exception('Must be an organization')
 
         #use different form names so that ie7 can be detected
         form_names = set(["bulk_action.public", "bulk_action.delete",

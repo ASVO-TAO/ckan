@@ -193,6 +193,13 @@ def register_group_plugins(map):
                         '/%s/activity/{id}/{offset}' % group_type,
                         controller=group_controller,
                         action='activity', ckan_icon='time'),
+            map.connect('%s_about' % group_type, '/%s/about/{id}' % group_type,
+                        controller=group_controller,
+                        action='about', ckan_icon='info-sign')
+            map.connect('%s_bulk_process' % group_type,
+                        '/%s/bulk_process/{id}' % group_type,
+                        controller=group_controller,
+                        action='bulk_process', ckan_icon='sitemap')
 
             if group_type in _group_plugins:
                 raise ValueError("An existing IGroupForm is "
