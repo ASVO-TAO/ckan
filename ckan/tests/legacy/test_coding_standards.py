@@ -791,7 +791,7 @@ class TestActionAuth(object):
     def process(cls):
         def get_functions(module_root):
             fns = {}
-            for auth_module_name in ['get', 'create', 'update', 'delete']:
+            for auth_module_name in ['get', 'create', 'update', 'delete', 'patch']:
                 module_path = '%s.%s' % (module_root, auth_module_name,)
                 try:
                     module = __import__(module_path)
@@ -805,7 +805,11 @@ class TestActionAuth(object):
                     if not hasattr(v, '__call__'):
                         continue
                     if v.__module__ != module_path:
-                        continue
+                        # 'new_func' is returned from the is_authorized_wrapper
+                        # which is defined outside the module and assigned
+                        # to vars in auth files.
+                        if '__name__' not in dir(v) or v.__name__ != 'new_func':
+                            continue
                     if not key.startswith('_'):
                         name = '%s: %s' % (auth_module_name, key)
                         fns[name] = v
