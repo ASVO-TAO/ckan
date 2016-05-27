@@ -293,6 +293,11 @@ def check_access(action, context, data_dict=None):
     return True
 
 
+def is_authorized_wrapper(action):
+    def new_func(context, data_dict=None):
+        return authz.is_authorized(action, context, data_dict)
+    return new_func
+
 _actions = {}
 def clear_actions_cache():
     _actions.clear()

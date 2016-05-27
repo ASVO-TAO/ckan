@@ -1,10 +1,11 @@
-from ckan import logic
+from ckan.logic import is_authorized_wrapper
 import ckan.logic.auth.update as _update
 
-package_patch = _update.package_update
 
-resource_patch = _update.resource_update
+package_patch = is_authorized_wrapper('package_update')
 
-group_patch = _update.group_update
+resource_patch = is_authorized_wrapper('resource_update')
 
-organization_patch = _update.organization_update
+group_patch = is_authorized_wrapper('group_update')
+
+organization_patch = is_authorized_wrapper('organization_update')

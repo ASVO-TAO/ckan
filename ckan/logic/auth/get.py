@@ -4,6 +4,8 @@ from ckan.lib.base import _
 from ckan.logic.auth import (get_package_object, get_group_object,
                             get_resource_object, get_related_object)
 
+is_authorized_wrapper = logic.is_authorized_wrapper
+
 
 def sysadmin(context, data_dict):
     ''' This is a pseudo check if we are a sysadmin all checks are true '''
@@ -29,31 +31,22 @@ def package_list(context, data_dict):
     # List of all active packages are visible by default
     return {'success': True}
 
-def current_package_list_with_resources(context, data_dict):
-    return package_list(context, data_dict)
+current_package_list_with_resources = is_authorized_wrapper('package_list')
 
 def revision_list(context, data_dict):
     # In our new model everyone can read the revison list
     return {'success': True}
 
-def group_revision_list(context, data_dict):
-    return group_show(context, data_dict)
-
-def organization_revision_list(context, data_dict):
-    return group_show(context, data_dict)
-
-def package_revision_list(context, data_dict):
-    return package_show(context, data_dict)
+group_revision_list = is_authorized_wrapper('group_show')
+organization_revision_list = is_authorized_wrapper('group_show')
+package_revision_list = is_authorized_wrapper('package_show')
 
 def group_list(context, data_dict):
     # List of all active groups is visible by default
     return {'success': True}
 
-def group_list_authz(context, data_dict):
-    return group_list(context, data_dict)
-
-def group_list_available(context, data_dict):
-    return group_list(context, data_dict)
+group_list_authz = is_authorized_wrapper('group_list')
+group_list_available = is_authorized_wrapper('group_list')
 
 def organization_list(context, data_dict):
     # List of all active organizations are visible by default
@@ -142,12 +135,8 @@ def resource_show(context, data_dict):
     else:
         return {'success': True}
 
-
-def resource_view_show(context, data_dict):
-    return resource_show(context, data_dict)
-
-def resource_view_list(context, data_dict):
-    return resource_show(context, data_dict)
+resource_view_show = is_authorized_wrapper('resource_show')
+resource_view_list = is_authorized_wrapper('resource_show')
 
 def revision_show(context, data_dict):
     # No authz check in the logic function
@@ -165,8 +154,7 @@ def group_show(context, data_dict):
     else:
         return {'success': False, 'msg': _('User %s not authorized to read group %s') % (user, group.id)}
 
-def organization_show(context, data_dict):
-    return group_show(context, data_dict)
+organization_show = is_authorized_wrapper('group_show')
 
 def vocabulary_show(context, data_dict):
     # Allow viewing of vocabs by default
@@ -181,20 +169,11 @@ def user_show(context, data_dict):
     # the API key are stripped at the action level if not not logged in.
     return {'success': True}
 
-def package_autocomplete(context, data_dict):
-    return package_list(context, data_dict)
-
-def group_autocomplete(context, data_dict):
-    return group_list(context, data_dict)
-
-def organization_autocomplete(context, data_dict):
-    return organization_list(context, data_dict)
-
-def tag_autocomplete(context, data_dict):
-    return tag_list(context, data_dict)
-
-def user_autocomplete(context, data_dict):
-    return user_list(context, data_dict)
+package_autocomplete = is_authorized_wrapper('package_list')
+group_autocomplete = is_authorized_wrapper('group_list')
+organization_autocomplete = is_authorized_wrapper('organization_list')
+tag_autocomplete = is_authorized_wrapper('tag_list')
+user_autocomplete = is_authorized_wrapper('user_list')
 
 def format_autocomplete(context, data_dict):
     return {'success': True}
@@ -206,15 +185,9 @@ def resource_status_show(context, data_dict):
     return {'success': True}
 
 ## Modifications for rest api
-
-def package_show_rest(context, data_dict):
-    return package_show(context, data_dict)
-
-def group_show_rest(context, data_dict):
-    return group_show(context, data_dict)
-
-def tag_show_rest(context, data_dict):
-    return tag_show(context, data_dict)
+package_show_rest = is_authorized_wrapper('package_show')
+group_show_rest = is_authorized_wrapper('group_show')
+tag_show_rest = is_authorized_wrapper('tag_show')
 
 def get_site_user(context, data_dict):
     # FIXME this is available to sysadmins currently till
@@ -237,28 +210,11 @@ def dashboard_activity_list(context, data_dict):
                 'msg': _("You must be logged in to access your dashboard.")}
 
 
-def dashboard_new_activities_count(context, data_dict):
-    # FIXME: This should go through check_access() not call is_authorized()
-    # directly, but wait until 2939-orgs is merged before fixing this.
-    # This is so a better not authourized message can be sent.
-    return authz.is_authorized('dashboard_activity_list',
-            context, data_dict)
-
-
-def user_follower_list(context, data_dict):
-    return sysadmin(context, data_dict)
-
-
-def dataset_follower_list(context, data_dict):
-    return sysadmin(context, data_dict)
-
-
-def group_follower_list(context, data_dict):
-    return sysadmin(context, data_dict)
-
-
-def organization_follower_list(context, data_dict):
-    return sysadmin(context, data_dict)
+dashboard_new_activities_count = is_authorized_wrapper('dashboard_activity_list')
+user_follower_list = is_authorized_wrapper('sysadmin')
+dataset_follower_list = is_authorized_wrapper('sysadmin')
+group_follower_list = is_authorized_wrapper('sysadmin')
+organization_follower_list = is_authorized_wrapper('sysadmin')
 
 
 def _followee_list(context, data_dict):
@@ -275,7 +231,7 @@ def _followee_list(context, data_dict):
         return {'success': True}
 
     # Sysadmins are authorized to see what anyone is following.
-    return sysadmin(context, data_dict)
+    return authz.is_authorized('sysadmin', context, data_dict)
 
 
 def followee_list(context, data_dict):
